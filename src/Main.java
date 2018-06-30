@@ -1,25 +1,13 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class Main
 {
-
-    static LinkedList<String> q = new LinkedList<String>();
-    static ArrayList<Client> clients = new ArrayList<Client>();
-    static int ID = 0;
-
-    public static void anAlleSenden(String msg)
-    {
-        for(int i = 0; i < clients.size(); i++)
-        {
-            clients.get(i).sendToClient(msg);
-            //System.out.println(msg+" an Client "+i+" gesendet.");
-        }
-    }
+    static ArrayList<Client> clients = new ArrayList<>();
+    public static ArrayList<Game> games = new ArrayList<>();
+    static int maxID;
 
     public static void main(String[] args) throws IOException
     {
@@ -35,16 +23,42 @@ public class Main
 
                 System.out.println("Client connected from " + s.getLocalAddress().getHostName());    //	TELL THEM THAT THE CLIENT CONNECTED
 
-                Client chat = new Client(s, ID++);//CREATE A NEW CLIENT OBJECT
+                Client chat = new Client(s);//CREATE A NEW CLIENT OBJECT
                 clients.add(chat);
                 Thread t = new Thread(chat);//MAKE A NEW THREAD
                 t.start();//START THE THREAD
             }
         } catch (Exception e)
         {
-            System.out.println("An error occured.");//IF AN ERROR OCCURED THEN PRINT IT
+            System.out.println("An error occurred.");//IF AN ERROR OCCURRED THEN PRINT IT
             e.printStackTrace();
         }
+    }
+
+    public static String gamesToString()
+    {
+        StringBuilder sb = new StringBuilder("u");
+        for (Game g : games)
+        {
+            sb.append(g.ID).append(g.currentNumberOfPlayers).append(g.getMaxNumberOfPlayers()).append(g.name).append('#');
+        }
+        return sb.toString();
+    }
+
+    public static void addGame(Game game)
+    {
+        games.add(game);
+    }
+
+    public static void addClientToGame(Client c, int ID)
+    {
+        Game g = games.get(ID);
+        if(g.ID == ID)
+        {
+            g.addClient(c);
+            return;
+        }
+        throw new IllegalArgumentException("IDs stimmen nicht überein: Argument-ID:"+ID+", Game-ID: "+g.ID);
     }
 
 }
