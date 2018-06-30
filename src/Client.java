@@ -71,6 +71,8 @@ public class Client implements Runnable{
                 a: Gib die Games zurück
                 bTest4: Erstellt ein Game namens Test mit bis zu 4 Spielern
                 c3: Tritt spiel mit ID 3 bei
+                d: Starte das Spiel
+                e: Verlasse das Spiel
                  */
                 case 'a':
                 {
@@ -97,6 +99,11 @@ public class Client implements Runnable{
                 case 'd':
                 {
                     game.anAlleSenden("m"+game.currentNumberOfPlayers);
+                    break;
+                }
+                case 'e':
+                {
+                    game.removeClient(this);
                     break;
                 }
                 default:

@@ -59,6 +59,7 @@ public class Game
         {
             if (clients[i] == c)
             {
+                clients[i].setGame(null);
                 clients[i] = null;
                 currentNumberOfPlayers--;
             }
