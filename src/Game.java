@@ -1,9 +1,11 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Game
 {
-    private Client[] clients;
+    public List<Client> clients;
+    private int maxNumberOfPlayers;
     private ArrayList<String> strings = new ArrayList<>();
     public int currentNumberOfPlayers;
     public String name;
@@ -11,18 +13,18 @@ public class Game
 
     Game(int size, String name, int ID)
     {
-        clients = new Client[size];
+        clients = new ArrayList<>();
         this.name = name;
         this.ID = ID;
     }
 
     public void anAlleSenden(String msg)
     {
-        for (int i = 0; i < clients.length; i++)
+        for (Client client : clients)
         {
-            if (clients[i] != null)
+            if (client != null)
             {
-                clients[i].sendToClient(msg);
+                client.sendToClient(msg);
             }
         }
         strings.add(msg);
@@ -30,12 +32,12 @@ public class Game
 
     void addClient(Client c)
     {
-        for (int i = 0; i < clients.length; i++)
+        for (int i = 0; i < maxNumberOfPlayers; i++)
         {
-            if (clients[i] == null)
+            if (clients.get(i) == null)
             {
                 c.setGame(this);
-                clients[i] = c;
+                clients.set(i, c);
                 c.setID(i);
                 currentNumberOfPlayers++;
                 sendOldMessagesToClient(c);
@@ -55,12 +57,12 @@ public class Game
 
     void removeClient(Client c)
     {
-        for (int i = 0; i < clients.length; i++)
+        for (int i = 0; i < clients.size(); i++)
         {
-            if (clients[i] == c)
+            if (clients.get(i) == c)
             {
-                clients[i].setGame(null);
-                clients[i] = null;
+                clients.get(i).setGame(null);
+                clients.set(i, null);
                 currentNumberOfPlayers--;
             }
         }
@@ -70,7 +72,7 @@ public class Game
     {
         for (int i = 0; true; i++)
         {
-            if (clients[i] == null)
+            if (clients.get(i) == null)
             {
                 return i;
             }
@@ -79,6 +81,11 @@ public class Game
 
     public int getMaxNumberOfPlayers()
     {
-        return clients.length;
+        return maxNumberOfPlayers;
+    }
+
+    public void setMaxNumberOfPlayers(int maxNumberOfPlayers)
+    {
+        this.maxNumberOfPlayers = maxNumberOfPlayers;
     }
 }

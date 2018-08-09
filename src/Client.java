@@ -73,6 +73,7 @@ public class Client implements Runnable{
                 c3: Tritt spiel mit ID 3 bei
                 d: Starte das Spiel
                 e: Verlasse das Spiel
+                fTest: Erstelle ein Spiel namens Test, das aus einer Datei geladen wird
                  */
                 case 'a':
                 {
@@ -106,6 +107,12 @@ public class Client implements Runnable{
                     game.removeClient(this);
                     break;
                 }
+                case 'f':
+                {
+                    game = new Game(4, msg.substring(1), Main.maxID++);
+                    game.addClient(this);
+                    Main.addGame(game);
+                }
                 default:
                 {
                     game.anAlleSenden("qFehler#Unbekannte Anfrage an Server: "+msg);
@@ -115,6 +122,15 @@ public class Client implements Runnable{
         }
         else
         {
+            if(msg.charAt(0) == 'm')
+            {
+                int i = 0;
+                while(game == null)
+                {
+                    System.out.println(i);
+                }
+                game.setMaxNumberOfPlayers(Integer.parseInt(""+msg.charAt(1)));
+            }
             game.anAlleSenden(msg);
         }
     }

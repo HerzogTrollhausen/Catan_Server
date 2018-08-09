@@ -2,36 +2,55 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main
 {
     static ArrayList<Client> clients = new ArrayList<>();
     public static ArrayList<Game> games = new ArrayList<>();
+    static boolean accepting = true;
+    static ServerSocket server;
     static int maxID;
+    static Game zielSpiel;
 
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args)
     {
         try
         {
             final int PORT = 6677;//SET NEW CONSTANT VARIABLE: PORT
-            ServerSocket server = new ServerSocket(PORT); //SET PORT NUMBER
+            server = new ServerSocket(PORT); //SET PORT NUMBER
             System.out.println("Waiting for clients...");//AT THE START PRINT THIS
-
-            while (true)//WHILE THE PROGRAM IS RUNNING
+            Accepter accepter = new Accepter();
+            Thread acceptThread = new Thread(accepter);
+            acceptThread.start();
+            Scanner sc = new Scanner(System.in);
+            while(true)
             {
-                Socket s = server.accept();//ACCEPT SOCKETS(CLIENTS) TRYING TO CONNECT
-
-                System.out.println("Client connected from " + s.getLocalAddress().getHostName());    //	TELL THEM THAT THE CLIENT CONNECTED
-
-                Client chat = new Client(s);//CREATE A NEW CLIENT OBJECT
-                clients.add(chat);
-                Thread t = new Thread(chat);//MAKE A NEW THREAD
-                t.start();//START THE THREAD
+                inputInterpreter(sc.nextLine());
             }
         } catch (Exception e)
         {
             System.out.println("An error occurred.");//IF AN ERROR OCCURRED THEN PRINT IT
             e.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     */
+    private static void inputInterpreter(String msg)
+    {
+        if(msg.charAt(0) == '/')
+        {
+            msg = msg.substring(1);
+            String[] words = msg.split(" ");
+            switch (words[0])
+            {
+                case "game":
+                {
+
+                }
+            }
         }
     }
 
@@ -60,5 +79,4 @@ public class Main
         }
         throw new IllegalArgumentException("IDs stimmen nicht überein: Argument-ID:"+ID+", Game-ID: "+g.ID);
     }
-
 }
