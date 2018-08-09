@@ -60,6 +60,11 @@ public class Client implements Runnable{
         this.ID = ID;
     }
 
+    public void sendID()
+    {
+        sendToClient("k"+ID);
+    }
+
     public void getMessage(String msg)
     {
         if(msg.charAt(0) == '?')
@@ -93,8 +98,8 @@ public class Client implements Runnable{
                 }
                 case 'c':
                 {
-                    Main.addClientToGame(this, Integer.parseInt(""+msg.charAt(1)));
                     sendToClient("k"+ID);
+                    Main.addClientToGame(this, Integer.parseInt(""+msg.charAt(1)));
                     break;
                 }
                 case 'd':

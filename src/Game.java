@@ -14,6 +14,7 @@ public class Game
     Game(int size, String name, int ID)
     {
         clients = new ArrayList<>();
+        maxNumberOfPlayers = size;
         this.name = name;
         this.ID = ID;
     }
@@ -34,7 +35,16 @@ public class Game
     {
         for (int i = 0; i < maxNumberOfPlayers; i++)
         {
-            if (clients.get(i) == null)
+            if (i >= clients.size())
+            {
+                c.setGame(this);
+                clients.add(c);
+                c.setID(i);
+                currentNumberOfPlayers++;
+                sendOldMessagesToClient(c);
+                return;
+            }
+            else if(clients.get(i) == null)
             {
                 c.setGame(this);
                 clients.set(i, c);
@@ -44,11 +54,12 @@ public class Game
                 return;
             }
         }
-        throw new IllegalStateException("Kein freier Platz für den Client im Spiel gefunden.");
+        throw new IllegalStateException("Kein freier Platz für den Client im Spiel gefunden. maxNumberOfPlayers: "+maxNumberOfPlayers);
     }
 
     void sendOldMessagesToClient(Client c)
     {
+        c.sendID();
         for (String string : strings)
         {
             c.sendToClient(string);
