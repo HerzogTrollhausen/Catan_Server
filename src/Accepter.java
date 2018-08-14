@@ -8,7 +8,7 @@ public class Accepter implements Runnable
     {
         while (Main.accepting)//WHILE THE PROGRAM IS RUNNING
         {
-            Socket s = null;//ACCEPT SOCKETS(CLIENTS) TRYING TO CONNECT
+            Socket s;//ACCEPT SOCKETS(CLIENTS) TRYING TO CONNECT
             try
             {
                 s = Main.server.accept();

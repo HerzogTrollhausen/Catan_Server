@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -7,11 +6,11 @@ import java.util.Scanner;
 public class Main
 {
     static ArrayList<Client> clients = new ArrayList<>();
-    public static ArrayList<Game> games = new ArrayList<>();
+    private static ArrayList<Game> games = new ArrayList<>();
     static boolean accepting = true;
     static ServerSocket server;
-    static int maxID;
-    static Game zielSpiel;
+    private static int maxID;
+    private static boolean running = true;
 
     public static void main(String[] args)
     {
@@ -24,7 +23,7 @@ public class Main
             Thread acceptThread = new Thread(accepter);
             acceptThread.start();
             Scanner sc = new Scanner(System.in);
-            while(true)
+            while(running)
             {
                 inputInterpreter(sc.nextLine());
             }
@@ -48,13 +47,22 @@ public class Main
             {
                 case "game":
                 {
-
+                    break;
+                }
+                case "q":
+                {
+                    System.out.println("Beenden");
+                    System.exit(-2);
                 }
             }
         }
+        else
+        {
+
+        }
     }
 
-    public static String gamesToString()
+    static String gamesToString()
     {
         StringBuilder sb = new StringBuilder("u");
         for (Game g : games)
@@ -64,12 +72,12 @@ public class Main
         return sb.toString();
     }
 
-    public static void addGame(Game game)
+    static void addGame(Game game)
     {
         games.add(game);
     }
 
-    public static void addClientToGame(Client c, int ID)
+    static void addClientToGame(Client c, int ID)
     {
         Game g = games.get(ID);
         if(g.ID == ID)
@@ -78,5 +86,89 @@ public class Main
             return;
         }
         throw new IllegalArgumentException("IDs stimmen nicht überein: Argument-ID:"+ID+", Game-ID: "+g.ID);
+
+
+    }
+
+    static void getMessage(String msg, Client client, Game game)
+    {
+        if(msg.charAt(0) == '?')
+        {
+            msg = msg.substring(1);
+            switch(msg.charAt(0))
+            {
+                /*
+                a: Gib die Games zurück
+                bTest4: Erstellt ein Game namens Test mit bis zu 4 Spielern
+                c3: Tritt spiel mit ID 3 bei
+                d: Starte das Spiel
+                e: Verlasse das Spiel
+                fTest: Erstelle ein Spiel namens Test, das aus einer Datei geladen wird
+
+                q: Beende den Server
+                 */
+                case 'a':
+                {
+                    client.sendToClient(Main.gamesToString());
+                    break;
+                }
+                case 'b':
+                {
+                    int maxAnzahlSpieler = Integer.parseInt(""+msg.charAt(1));
+                    String name = msg.substring(2);
+                    game = new Game(maxAnzahlSpieler, name, Main.maxID++);
+                    game.addClient(client);
+                    Main.addGame(game);
+                    client.sendToClient("k"+client.ID);
+
+                    break;
+                }
+                case 'c':
+                {
+                    client.sendToClient("k"+client.ID);
+                    Main.addClientToGame(client, Integer.parseInt(""+msg.charAt(1)));
+                    break;
+                }
+                case 'd':
+                {
+                    game.anAlleSenden("m"+game.currentNumberOfPlayers);
+                    break;
+                }
+                case 'e':
+                {
+                    if(game != null) {
+                        game.removeClient(client);
+                    }
+                    clients.remove(client);
+                    client.listening = false;
+                    break;
+                }
+                case 'f':
+                {
+                    game = new Game(4, msg.substring(1), Main.maxID++);
+                    game.addClient(client);
+                    Main.addGame(game);
+                }Main.running = false;
+
+                default:
+                {
+                    game.anAlleSenden("qFehler#Unbekannte Anfrage an Server: "+msg);
+                    throw new IllegalArgumentException("Unbekannte Anfrage an Server: "+msg);
+                }
+            }
+        }
+        else
+        {
+            if(msg.charAt(0) == 'm')
+            {
+                int i = 0;
+                while(game == null)
+                {
+                    System.out.println(i);
+                }
+                game.setMaxNumberOfPlayers(Integer.parseInt(""+msg.charAt(1)));
+            }
+            game.anAlleSenden(msg);
+        }
     }
 }

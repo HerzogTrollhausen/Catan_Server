@@ -1,15 +1,14 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-public class Game
+class Game
 {
-    public List<Client> clients;
+    private List<Client> clients;
     private int maxNumberOfPlayers;
     private ArrayList<String> strings = new ArrayList<>();
-    public int currentNumberOfPlayers;
-    public String name;
-    public int ID;
+    int currentNumberOfPlayers;
+    String name;
+    int ID;
 
     Game(int size, String name, int ID)
     {
@@ -19,7 +18,7 @@ public class Game
         this.ID = ID;
     }
 
-    public void anAlleSenden(String msg)
+    void anAlleSenden(String msg)
     {
         for (Client client : clients)
         {
@@ -57,7 +56,7 @@ public class Game
         throw new IllegalStateException("Kein freier Platz für den Client im Spiel gefunden. maxNumberOfPlayers: "+maxNumberOfPlayers);
     }
 
-    void sendOldMessagesToClient(Client c)
+    private void sendOldMessagesToClient(Client c)
     {
         c.sendID();
         for (String string : strings)
@@ -79,6 +78,7 @@ public class Game
         }
     }
 
+    @SuppressWarnings("unused")
     private int getFirstID()
     {
         for (int i = 0; true; i++)
@@ -90,12 +90,12 @@ public class Game
         }
     }
 
-    public int getMaxNumberOfPlayers()
+    int getMaxNumberOfPlayers()
     {
         return maxNumberOfPlayers;
     }
 
-    public void setMaxNumberOfPlayers(int maxNumberOfPlayers)
+    void setMaxNumberOfPlayers(int maxNumberOfPlayers)
     {
         this.maxNumberOfPlayers = maxNumberOfPlayers;
     }
